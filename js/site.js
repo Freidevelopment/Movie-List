@@ -71,3 +71,24 @@ function displayMovies(movies) {
 
     };
 }
+
+// When the user clicks the more info button show a modal
+// https://api.themoviedb.org/3/movie/663134
+async function showMovieDetails(button) {
+    let movieId = button.getAttribute('data-movieId');
+    let movie = await getMovieDetail(movieId);
+
+    // get the modal and modify it
+    
+}
+
+// call the TMPAPI to get teh movie detail
+// https://api.themoviedb.org/3/movie/663134
+async function getMovieDetail(movieId) {
+    
+  const movieDetailUrl =  `https://api.themoviedb.org/3/movie/${movieId}`;
+  
+  alert(`the movie id is ${movieId}`);
+
+
+}
