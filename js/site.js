@@ -72,6 +72,10 @@ function displayMovies(movies) {
     };
 }
 
+// Step ONE when the user click hte more info button show a modal
+// Step TWO call the API. Make sure teh content is in teh netword tab
+// Step Three - Modify the modal for each movie
+
 // When the user clicks the more info button show a modal
 // https://api.themoviedb.org/3/movie/663134
 async function showMovieDetails(button) {
@@ -82,7 +86,7 @@ async function showMovieDetails(button) {
     
 }
 
-// call the TMPAPI to get teh movie detail
+// call the TMDAPI to get teh movie detail
 // https://api.themoviedb.org/3/movie/663134
 async function getMovieDetail(movieId) {
     
@@ -90,5 +94,5 @@ async function getMovieDetail(movieId) {
   
   alert(`the movie id is ${movieId}`);
 
-
+// Return a Movie object
 }
