@@ -1,0 +1,141 @@
+:root {
+    /* colors */
+    --njf-dark-color: #212121;
+    --njf-light-color: #deeefb;
+    --njf-background-color: rgba(250, 250, 250, 0.8);
+
+    /* fonts */
+    --njf-title-font: "Bebas Neue", sans-serif;
+    --njf-subtitle-font: "Fira Sans", sans-serif;
+    --njf-heading-font: "Bebas Neue", sans-serif;
+    --njf-body-font: "Roboto", sans-serif;
+
+    /* base text styles */
+    --njf-title-color: var(--njf-dark-color);
+    --njf-font-size: 1.2rem;
+    --njf-font-weight: 400;
+    --njf-line-height: 1.5rem;
+
+
+}
+
+/*#region Sticky Footer */
+html,
+body {
+    height: 100%;
+}
+
+body{
+    display: flex;
+    flex-direction: column;
+    font-family: var(--njf-body-font);
+    font-size: var(--njf-font-size);
+    font-weight: var(--njf-font-weight);
+    line-height: var(--njf-line-height);
+    color: var(--njf-dark-color);
+    background-color: var(--njf-background-color);
+}
+
+h1, .h1,
+h2, .h2,
+h3, .h3,
+h4, .h4,
+h5, .h5,
+h6, .h6 {
+    font-family: var(--njf-heading-font);
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--njf-title-color);
+    letter-spacing: .1rem;
+}
+
+main{
+    flex-grow: 1;
+}
+
+footer {
+    flex-shrink: 0;
+}
+/*#endregion Sticky Footer */
+
+/* #region navbar, footer */
+nav,
+footer {
+    background-color: var(--njf-theme-900);
+    color: var(--njf-theme-100) !important;
+}
+
+.nav-link {
+    color: var(--njf-theme-100);
+}
+
+.nav-link:hover {
+    color: var(--njf-theme-300);
+}
+
+.nav-link.active {
+    color: var(--njf-theme-100) !important;
+    font-weight: 500;
+}
+
+.nav-link.active:hover {
+    color: var(--njf-theme-300) !important;
+}
+
+.navbar-brand {
+    color: var(--njf-theme-100);
+}
+
+.navbar-brand:hover {
+    color: var(--njf-theme-300);
+}
+
+footer .bi {
+    color: var(--njf-theme-200);
+    font-size: 1.5rem;
+    padding-left: .5rem;
+    transition: color 0.25;
+}
+
+footer .bi:hover {
+    color: var(--njf-theme-core);
+}
+
+/* #endregion navbar, footer */
+
+/* #region custom button color */
+.btn-outline-primary {
+    --bs-btn-color: var(--njf-theme-600);
+    --bs-btn-border-color: var(--njf-theme-600);
+    --bs-btn-hover-bg: var(--njf-theme-700);
+    --bs-btn-hover-border-color: var(--njf-theme-700);
+    --bs-btn-active-bg: var(--njf-theme-800);
+    --bs-btn-active-border-color: var(--njf-theme-800);
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--njf-theme-600);
+    --bs-btn-border-color: var(--njf-theme-600);
+    --bs-btn-hover-bg: var(--njf-theme-700);
+    --bs-btn-hover-border-color: var(--njf-theme-700);
+    --bs-btn-active-bg: var(--njf-theme-800);
+    --bs-btn-active-border-color: var(--njf-theme-800);
+}
+/* #endregion custom button color */
+
+.app-logo {
+    max-width: 450px;
+}
+
+.checklist {
+    list-style-type: none;
+}
+
+.checklist .bi {
+    color: var(--njf-theme-core);
+}
+
+.devicons {
+    font-size: 3.5rem;
+}
+
