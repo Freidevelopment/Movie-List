@@ -72,27 +72,81 @@ function displayMovies(movies) {
     };
 }
 
-// Step ONE when the user click hte more info button show a modal
-// Step TWO call the API. Make sure teh content is in teh netword tab
+// Step ONE when the user click the more info button show a modal
+// Step TWO call the API. Make sure the content is in the netword tab
 // Step Three - Modify the modal for each movie
 
 // When the user clicks the more info button show a modal
-// https://api.themoviedb.org/3/movie/663134
+// https://api.themoviedb.org/3/movie/693134
 async function showMovieDetails(button) {
+  // get the modal and modify it
     let movieId = button.getAttribute('data-movieId');
+
     let movie = await getMovieDetail(movieId);
 
-    // get the modal and modify it
+    if (movie != undefined) {
+      
+        document.getElementById('movieTitle').textContent = movie.title;
+        document.getElementById('modal-movie-title').textContent = movie.title;
+        document.getElementById('movie-tagline').textContent = movie.tagline;
+        document.getElementById('modal-Poster').src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+        document.getElementById('modal-overview').textContent = movie.overview;
+
+        
+        let movieGenres = document.getElementById('movie-genres');
+        movieGenres.innerHTML = "";
+        // <span class="badge text-bg-primary">Action</span>
+        // get the genres
+        movie.genres.forEach( genre => 
+          {
+            // Create element that will create a span tag '<span></span'>
+            let badge = document.createElement('span');
+            badge.classList.add('badge', 'text-bg-primary');
+            badge.textContent = genre.name;
+            movieGenres.appendChild(badge);
+          }
+      )
+
+    
+      // pop the modal on the page. now that we have the data
+    const myModal = new bootstrap.Modal('#movie-modal', {
+      keyboard: false
+    });
+
+    let modalToggle = document.getElementById('movie-modal'); 
+    myModal.show(modalToggle);
+    
+      } else {
+      alert = "Movie is not found sorry";
+    }
+    
     
 }
 
-// call the TMDAPI to get teh movie detail
+// call the TMDAPI to get the movie detail
 // https://api.themoviedb.org/3/movie/663134
 async function getMovieDetail(movieId) {
     
-  const movieDetailUrl =  `https://api.themoviedb.org/3/movie/${movieId}`;
-  
-  alert(`the movie id is ${movieId}`);
+  // call an API and return a Movie object
+  try {
+    const movieDetailUrl =  `https://api.themoviedb.org/3/movie/${movieId}`;
 
-// Return a Movie object
+    let response = await fetch(movieDetailUrl, {
+      headers: {
+        'Authorization': `Bearer ${API_KEY}`
+      }
+    });
+
+    if(response.ok) {
+      let movie = await response.json();
+      return movie;
+    } else {
+      return undefined;
+    }
+
+  } catch(error) {
+    console.log(error);
+    return undefined;
+  }
+
 }

@@ -34,7 +34,7 @@
 
 </head>
 
-<body data-njf-theme="cyan">
+<body data-njf-theme="cyan" onload="displayPopularMovies()">
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container-xxl">
@@ -65,7 +65,6 @@
     </header>
 
     <main class="container-xxl py-3 mt-5">
-        <button id="btnSubmit" class="btn btn-primary">Get Popular Movies</button>
         <h1 class="mt-3 text-center display-5">Popular Movies</h1>
         <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4" id="movie-row">
             
@@ -100,7 +99,48 @@
     </footer>
 
     <!-- Modal -->
+    <div class="modal" id="movie-modal" tabindex="-1" aria-labelledby="modalCard" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="movieTitle">Movie Title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-close="Close"></button>
+                </div>
+                <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 col-md-4">
+                                    <img class="modal-Poster img-fluid" id= "modal-Poster" alt="modal-Poster" src="https://image.tmdb.org/t/p/w500/qhb1qOilapbapxWQn9jtRCMwXJF.jpg" />
+                            </div>    
+                                <div class="col-12 col-md-8">
+                                    <h3 class="display-6 fw-bold mb-0" id="modal-movie-title">Movie Tittle</h3>
+                                    <div class="lead" id="movie-tagline">Movie Tag line</div>
+                                    <div class="d-flex flex-row gap-1 my-3" id="movie-genres">
+                                        <span class="badge text-bg-primary">Action</span>
+                                        <span class="badge text-bg-primary">Adventure</span>
+                                        <span class="badge text-bg-primary">Science Fiction</span>
+                                    </div>
+                                    <h4>Synopsis</h4>
+                                    <p class="modal-overview" id="modal-overview">
+                                         A breif explanation about the movie without spoiling anything
+    
+                                    </p>
+                                    <article>Production Companies</article>
+                                    <div id="production-Logos">
+    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                <div class="modal-footer d-flex">
+                    <button type = "button" class="btn btn-secondary me-auto" data-bs-dismiss="modal">Close</button>
+                    <a href="#" target="_blank" id="modal-imdb" class="btn btn-warning">View on IMDB</a>
+                    <a href="#" target="_blank" id="modal-link" class="btn btn-primary">Movie Home Page</a>
+                </div>
+                </div>
+            </div>
 
+        </div>
+    </div>
     <!-- Card templates -->
     <template id = "movie-card-template">
         <div class = "col">
@@ -117,7 +157,9 @@
                 </div>
                 <div class="card-footer d-flex justify-content-between">
                     <button type = "button" class="btn btn-outline-primary">Add to Favorites</button>
-                    <button type = "button" onclick="showMovieDetails(this)" class="btn btn-primary">More Info</button>
+                    <button type = "button" onclick="showMovieDetails(this)" class="btn btn-primary">
+                        More Info
+                    </button>
                 </div>
             </div>
         </div>
@@ -134,11 +176,6 @@
 
     <!-- Custom JS -->
     <script src="/js/site.js"></script>
-
-    <script>
-        let button = document.getElementById('btnSubmit');
-        button.addEventListener('click', displayPopularMovies);
-    </script>
 
 </body>
 
