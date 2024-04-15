@@ -7,6 +7,12 @@ async function displayPopularMovies() {
   displayMovies(movies);
 }
 
+function displayFavoriteMovies() {
+  let favorites = getFavoriteMovies();
+  displayMovies(favorites);
+
+}
+
 // Returns a list of an array of movie objects or an empty array
 async function getPopularMovies() {
     
@@ -149,4 +155,62 @@ async function getMovieDetail(movieId) {
     return undefined;
   }
 
+}
+
+
+async function addFavoriteMovie(button) {
+
+  const movieId = button.getAttribute('data-movieId'); 
+  let movies = getFavoriteMovies();
+
+  let duplicateMovie = movies.find(movie => movie.id == movieId);
+  
+  if(duplicateMovie == undefined) {
+    const favoriteMovie = await getMovieDetail(movieId);
+
+    if(favoriteMovie != undefined) {
+      movies.push(favoriteMovie);
+      saveFavoriteMovies(movies);
+      
+    }
+  }
+
+  // let the user know that it has been added
+
+}
+
+function removeFavoriteMovie(button) {
+
+  // get our Array of Favorite Movies
+  let favorites = getFavoriteMovies();
+
+  // search for a movie with the ID that is on the button 
+  // remove the movie from the Array
+  const movieId = button.getAttribute('data-movieId');
+  let newFavorites = favorites.filter(movie => movie.id != movieId);
+
+
+  // save the array
+  saveFavoriteMovies(newFavorites);
+  // update the movies on the page 
+  displayFavoriteMovies();
+
+}
+
+function getFavoriteMovies() {
+    let movieJSON = localStorage.getItem('njf-favorite-movies');
+    let favoriteMovies = [];
+
+    if(movieJSON == null) {
+      localStorage.setItem('njf-favorite-movies', '[]');
+    } else {
+      favoriteMovies = JSON.parse(movieJSON);
+    }
+
+    return favoriteMovies;
+}
+
+function saveFavoriteMovies(favoriteMovies) {
+    let moviesAsString = JSON.stringify(favoriteMovies);
+    localStorage.setItem('njf-favorite-movies', moviesAsString);
 }
