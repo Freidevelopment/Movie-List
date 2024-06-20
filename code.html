@@ -73,29 +73,307 @@
             <div class="col-12 col-lg-8">
                 <pre class="line-numbers">
                 <code class="language-js">
-                    function displayMessage() {
-                        let inputBox = document.getElementById('message');
-                        let message = inputBox.value;
-                    
-                        Swal.fire(
+                    // called from the webpage (controller function)
+                    async function displayPopularMovies() {
+                    let movies = await getPopularMovies();
+                    displayMovies(movies);
+                    }
+
+                    function displayFavoriteMovies() {
+                    let favorites = getFavoriteMovies();
+                    displayMovies(favorites);
+
+                    }
+
+                    // Returns a list of an array of movie objects or an empty array
+                    async function getPopularMovies() {
+                        
+                        try {
+                        // Step One get the url
+                        const getPopularMoviesUrl = 'https://api.themoviedb.org/3/movie/popular';
+                        // step Two call the API. 'the variable response holds the json data response'
+                        let response = await fetch(getPopularMoviesUrl, {
+                            headers: {
+                            'Authorization': `Bearer ${API_KEY}`
+                            }
+                        });
+
+                        if(response.ok) {
+                            let data = await response.json();
+                            return data.results;
+                        } else {
+                            return [];
+                        }
+
+                        } catch(error) {
+                        console.log(error);
+                        return [];
+                        }
+
+                    }
+
+                    // Formats the movie object into html
+                    function displayMovies(movies) {
+                        // get movie card template
+                        const movieCardTemplate = document.getElementById('movie-card-template');
+
+                        // Find the element where the movie card will go
+                        const movieRow = document.getElementById('movie-row');
+                        // Reset the display
+                        movieRow.innerHTML = '';
+
+                        // we need a card for each movie in the movies array
+                        for (const movie of movies) {
+
+                            // get a copy of the template
+                            let movieCard = movieCardTemplate.content.cloneNode(true);
+
+                            // Modify the template with the current movie
+                            let titleElement = movieCard.querySelector('.card-body > h5');
+                            titleElement.textContent = movie.title;
+
+                            let descriptionElement = movieCard.querySelector('.card-text');
+                            descriptionElement.textContent = movie.overview;
+
+                            let movieImgElement = movieCard.querySelector('.card-img-top');
+                            movieImgElement.setAttribute('src', `https://image.tmdb.org/t/p/w500${movie.poster_path}`); 
+
+                            let infoButton = movieCard.querySelector('.btn-primary');
+                            infoButton.setAttribute('data-movieId', movie.id);
+                            
+                            let favoriteButton = movieCard.querySelector('.btn-outline-primary');
+                            favoriteButton.setAttribute('data-movieId', movie.id);
+
+                            // add it to the page
+                            movieRow.appendChild(movieCard);
+
+                        };
+                    }
+
+                    // Step ONE when the user click the more info button show a modal
+                    // Step TWO call the API. Make sure the content is in the network tab
+                    // Step Three - Modify the modal for each movie
+
+                    // When the user clicks the more info button show a modal
+                    // https://api.themoviedb.org/3/movie/693134
+                    async function showMovieDetails(button) {
+                    // get the modal and modify it
+                        let movieId = button.getAttribute('data-movieId');
+
+                        let movie = await getMovieDetail(movieId);
+
+                        if (movie != undefined) {
+                        
+                            document.getElementById('movieTitle').textContent = movie.title;
+                            document.getElementById('modal-movie-title').textContent = movie.title;
+                            document.getElementById('movie-tagline').textContent = movie.tagline;
+                            document.getElementById('modal-Poster').src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+                            document.getElementById('modal-overview').textContent = movie.overview;
+
+                            
+                            let movieGenres = document.getElementById('movie-genres');
+                            movieGenres.innerHTML = "";
+                            // &ltspan class="badge text-bg-primary">Action&lt/span>
+                            // get the genres
+                            movie.genres.forEach( genre => 
                             {
-                                title: "Movie List",
-                                text: message,
-                                icon: "success",
-                                backdrop: false
-                            });                    
+                                // Create element that will create a span tag '&ltspan>&lt/span'>
+                                let badge = document.createElement('span');
+                                badge.classList.add('badge', 'text-bg-primary');
+                                badge.textContent = genre.name;
+                                movieGenres.appendChild(badge);
+                            }
+                        )
+
+                        
+                        // pop the modal on the page. now that we have the data
+                        const myModal = new bootstrap.Modal('#movie-modal', {
+                        keyboard: false
+                        });
+
+                        let modalToggle = document.getElementById('movie-modal'); 
+                        myModal.show(modalToggle);
+                        
+                        } else {
+                        alert = "Movie is not found sorry";
+                        }
+                        
+                        
+                    }
+
+                    // call the TMDAPI to get the movie detail
+                    // https://api.themoviedb.org/3/movie/663134
+                    async function getMovieDetail(movieId) {
+                        
+                    // call an API and return a Movie object
+                    try {
+                        const movieDetailUrl =  `https://api.themoviedb.org/3/movie/${movieId}`;
+
+                        let response = await fetch(movieDetailUrl, {
+                        headers: {
+                            'Authorization': `Bearer ${API_KEY}`
+                        }
+                        });
+
+                        if(response.ok) {
+                        let movie = await response.json();
+                        return movie;
+                        } else {
+                        return undefined;
+                        }
+
+                    } catch(error) {
+                        console.log(error);
+                        return undefined;
+                    }
+
+                    }
+
+
+                    async function addFavoriteMovie(button) {
+
+                    const movieId = button.getAttribute('data-movieId'); 
+                    let movies = getFavoriteMovies();
+
+                    let duplicateMovie = movies.find(movie => movie.id == movieId);
+                    
+                    if(duplicateMovie == undefined) {
+                        const favoriteMovie = await getMovieDetail(movieId);
+
+                        if(favoriteMovie != undefined) {
+                        movies.push(favoriteMovie);
+                        saveFavoriteMovies(movies);
+                        
+                        }
+                    }
+
+                    // let the user know that it has been added
+
+                    }
+
+                    function removeFavoriteMovie(button) {
+
+                    // get our Array of Favorite Movies
+                    let favorites = getFavoriteMovies();
+
+                    // search for a movie with the ID that is on the button 
+                    // remove the movie from the Array
+                    const movieId = button.getAttribute('data-movieId');
+                    let newFavorites = favorites.filter(movie => movie.id != movieId);
+
+
+                    // save the array
+                    saveFavoriteMovies(newFavorites);
+                    // update the movies on the page 
+                    displayFavoriteMovies();
+
+                    }
+
+                    function getFavoriteMovies() {
+                        let movieJSON = localStorage.getItem('njf-favorite-movies');
+                        let favoriteMovies = [];
+
+                        if(movieJSON == null) {
+                        localStorage.setItem('njf-favorite-movies', '[]');
+                        } else {
+                        favoriteMovies = JSON.parse(movieJSON);
+                        }
+
+                        return favoriteMovies;
+                    }
+
+                    function saveFavoriteMovies(favoriteMovies) {
+                        let moviesAsString = JSON.stringify(favoriteMovies);
+                        localStorage.setItem('njf-favorite-movies', moviesAsString);
                     }
                 </code>
             </pre>
             </div>
             <!-- The code's explanation -->
             <div class="col-12 col-lg-4">
-                <p>The code is structured in one function.</p>
-                <h5><code>displayMessage()</code></h5>
+                <p>The code is structured into ten functions.</p>
+                <h5><code>displayPopularMovies()</code></h5>
                 <p>
-                    The <code>displayMessage</code> function gets the
-                    text from the input element and displays it in
-                    a Sweet Alert popup.
+                    The <code>displayPopularMovies</code> function simply 
+                    calls the <code>getPopularMovies</code> funtion and than 
+                    places the array received from that funtion 
+                    into the <code>displayMovies</code> funtion.
+                </p>
+                <h5><code>getPopularMovies()</code></h5>
+                <p>
+                    The <code>getPopularMovies</code> function gets
+                    the url which is than used to call the api with an 
+                    API Key to safely get from the database.
+                    The response given from this api is than checked
+                    to make sure that it was successful and the data is sent 
+                    back as an array to the <code>displayPopularMovies</code> function.
+                    If it fails it sends an empty array back.  
+                </p>
+                <h5><code>displayMovies()</code></h5>
+                <p>
+                    The <code>displayMovies</code> function 
+                    gets the template that was made and empties it of 
+                    all previous data. It than uses a for loop to place each piece 
+                    of data into the appropiate locations for every movie in the array
+                    that was sent back from the api call.
+                </p>
+                <h5><code>showMovieDetails(button)</code></h5>
+                <p>
+                    The <code>showMovieDetails</code> function 
+                    is called when the movie details button is clicked.
+                    This calls the <code>getMovieDetail</code> function to get 
+                    all of the data needed for the <code>showMovieDetails</code> function 
+                    to run. It opens a modal which has more space for information
+                    on the particular movie. That space is filled with extra information
+                    about the specific move that is opened as only one can be open at any
+                    one time. 
+                </p>
+                <h5><code>getMovieDetail(movieId)</code></h5>
+                <p>
+                    The <code>getMovieDetail</code> function 
+                    uses the movieId to call the api to get the entirety
+                    of the movie that I am looking for. If the call to 
+                    the api is successful it will send the information back so that it 
+                    can be displayed in the <code>showMovieDetails</code> function. 
+                </p>
+                <h5><code>addFavoriteMovie(button)</code></h5>
+                <p>
+                    The <code>addFavoriteMovie</code> function 
+                    calls the <code>getFavoriteMovies</code> function
+                    to get the array of the users favorite movies list. 
+                    This than uses the given data to get the appropriate movie 
+                    and push the chosen movie into the favoriteMovies array and than saved.
+                </p>
+                <h5><code>removeFavoriteMovie(button)</code></h5>
+                <p>
+                    The <code>removeFavoriteMovie</code> function 
+                    calls the <code>getFavoriteMovies</code> function
+                    to get the array of the users favorite movies list. 
+                    This than looks through the array to find the specific 
+                    movie within the array and removes it from the array.
+                    The new array is than saved with the new changes. 
+                </p>
+                <h5><code>getFavoriteMovies()</code></h5>
+                <p>
+                    The <code>getFavoriteMovies</code> function 
+                    gets the favorite movies array that is saved in local 
+                    storage. Each movie is placed within each place of the 
+                    array as an object. and returns it to the user.
+                </p>
+                <h5><code>saveFavoriteMovies(favoriteMovies)</code></h5>
+                <p>
+                    The <code>saveFavoriteMovies</code> function 
+                    places each object as a string which is saved 
+                    in local storage.
+                </p>
+                <h5><code>displayFavoriteMovies()</code></h5>
+                <p>
+                    The <code>displayFavoriteMovies</code> function 
+                    uses the <code>getFavoriteMovies</code> function 
+                    to get all of the saved favorite movies that are 
+                    in local storage for the user. This than uses the 
+                    <code>displayMovies</code> function for the user 
+                    to see only their specific movies. 
                 </p>
             </div>
         </div>

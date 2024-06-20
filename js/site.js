@@ -40,7 +40,7 @@ async function getPopularMovies() {
 
 }
 
-// Formats the movie abject into html
+// Formats the movie object into html
 function displayMovies(movies) {
     // get movie card template
     const movieCardTemplate = document.getElementById('movie-card-template');
@@ -79,7 +79,7 @@ function displayMovies(movies) {
 }
 
 // Step ONE when the user click the more info button show a modal
-// Step TWO call the API. Make sure the content is in the netword tab
+// Step TWO call the API. Make sure the content is in the network tab
 // Step Three - Modify the modal for each movie
 
 // When the user clicks the more info button show a modal
